@@ -122,6 +122,9 @@ void *Motor(void *arg){
 	//softPWM initialisieren
 	//softPwmCreate(int pin, int initialValue, int pwmRange);
 	softPwmCreate(0, 0, 100);
+	softPwmCreate(1, 0, 100);
+	softPwmCreate(2, 0, 100);
+	softPwmCreate(3, 0, 100);
 
 	//PWM ändern -> void softPwmWrite (int pin, int value) ;
 	float speed = 0;
@@ -137,6 +140,9 @@ void *Motor(void *arg){
 
 		cout << "Speed: " << speed << "%" << endl;
 		softPwmWrite(0, speed);
+		softPwmWrite(1, speed);
+		softPwmWrite(2, speed);
+		softPwmWrite(3, speed);
 
 
 
