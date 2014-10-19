@@ -34,13 +34,6 @@ int main(){
 			x = (32768 - (x - 32768)) * (-1);
 		}
 
-		/*LSB = wiringPiI2CReadReg16(fd, 0x28);
-		MSB = wiringPiI2CReadReg16(fd, 0x29);
-		int xh = ((MSB << 8) | LSB);
-		float x = (float)xh / (float)16777216;
-		if (old_x < 0.05 && x > 0.94) x = old_x;
-		old_x = x;*/
-
 		LSB = wiringPiI2CReadReg8(fd, 0x2A);
 		MSB = wiringPiI2CReadReg8(fd, 0x2B);
 		int y = ((MSB << 8) | LSB);
@@ -72,10 +65,6 @@ int main(){
 		int t = wiringPiI2CReadReg8(fd, 0x26);
 		printf("The temperature is: %d\n\n\n", t);
 
-		
-		/*cout << "X: " << wiringPiI2CRead(fd) <<
-			"  Y: " << wiringPiI2CRead(fd) <<
-			"  Z: " << wiringPiI2CRead(fd) << endl;*/
 		usleep(500000);
 	}
 	return 0;
