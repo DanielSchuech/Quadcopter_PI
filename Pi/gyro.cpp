@@ -27,26 +27,33 @@ int main(){
 	while (true){
 		int MSB, LSB;
 
-		LSB = wiringPiI2CReadReg16(fd, 0x28);
+		LSB = wiringPiI2CReadReg8(fd, 0x28);
+		MSB = wiringPiI2CReadReg8(fd, 0x29);
+		int x = ((MSB << 8) | LSB);
+		if (x >= 32768){
+			x = (32768 - (x - 32768)) * (-1);
+		}
+
+		/*LSB = wiringPiI2CReadReg16(fd, 0x28);
 		MSB = wiringPiI2CReadReg16(fd, 0x29);
 		int xh = ((MSB << 8) | LSB);
 		float x = (float)xh / (float)16777216;
 		if (old_x < 0.05 && x > 0.94) x = old_x;
-		old_x = x;
+		old_x = x;*/
 
-		MSB = wiringPiI2CReadReg16(fd, 0x2B);
-		LSB = wiringPiI2CReadReg16(fd, 0x2A);
-		int yh = ((MSB << 8) | LSB);
-		float y = (float)yh / (float)16777216;
-		if (old_y < 0.05 && y > 0.94) y = old_y;
-		old_y = y;
+		LSB = wiringPiI2CReadReg8(fd, 0x2A);
+		MSB = wiringPiI2CReadReg8(fd, 0x2B);
+		int y = ((MSB << 8) | LSB);
+		if (y >= 32768){
+			y = (32768 - (y - 32768)) * (-1);
+		}
 
-		MSB = wiringPiI2CReadReg16(fd, 0x2D);
-		LSB = wiringPiI2CReadReg16(fd, 0x2C);
-		int zh = ((MSB << 8) | LSB);
-		float z = (float)zh / (float)16777216;
-		if (old_z < 0.05 && z > 0.94) z = old_z;
-		old_z = z;
+		LSB = wiringPiI2CReadReg8(fd, 0x2C);
+		MSB = wiringPiI2CReadReg8(fd, 0x2D);
+		int z = ((MSB << 8) | LSB);
+		if (z >= 32768){
+			z = (32768 - (z - 32768)) * (-1);
+		}
 
 		/*Berechnung des Winkels
 		double xAngle = atan(x / (sqrt(pow(y,2) + pow(z,2))));
@@ -57,9 +64,9 @@ int main(){
 		xAngle /= 3.141592; yAngle /= 3.141592; zAngle /= 3.141592;
 		*/
 
-		cout << "Value of X is: " << x << endl;
-		cout << "Value of Y is: " << y << endl;
-		cout << "Value of Z is: " << z << endl;
+		cout << "Value of X is: " << x << "         " << (float)x / 32768 << "%" << endl;
+		cout << "Value of Y is: " << y << "         " << (float)y / 32768 << "%" << endl;
+		cout << "Value of Z is: " << z << "         " << (float)z / 32768 << "%" << endl;
 
 
 		int t = wiringPiI2CReadReg8(fd, 0x26);
