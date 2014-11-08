@@ -65,6 +65,10 @@ int main(){
 		int t = wiringPiI2CReadReg8(fd, 0x26);
 		printf("The temperature is: %d\n\n\n", t);
 
+		
+		/*cout << "X: " << wiringPiI2CRead(fd) <<
+			"  Y: " << wiringPiI2CRead(fd) <<
+			"  Z: " << wiringPiI2CRead(fd) << endl;*/
 		usleep(500000);
 	}
 	return 0;
