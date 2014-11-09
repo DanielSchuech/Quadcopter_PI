@@ -173,6 +173,16 @@ void *Motor(void *arg){
 		long seconds = ((struct datacenter*)arg)->seconds;
 		int ButtonSelect = ((struct datacenter*)arg)->ButtonSelect;
 
+		float wantedX = 0;
+		float wantedY = 0;
+		float wantedZ = leftStick_Y / 20;
+
+		wantedX += rightStick_Y / 20;
+		wantedY -= rightStick_Y / 20;
+
+		wantedX -= rightStick_X / 20;
+		wantedY += rightStick_X / 20;
+
 		//Gyro Werte ermitteln
 		int MSB, LSB;
 		LSB = wiringPiI2CReadReg8(fd, 0x28);
@@ -198,8 +208,8 @@ void *Motor(void *arg){
 
 		//Gyro Werte normalisieren
 		float f_x = (float)x / (float)32768;
-		float f_y = y / 32768;
-		float f_z = z / 32768;
+		float f_y = (float)y / (float)32768;
+		float f_z = (float)z / (float)32768;
 
 		//Check Time
 		timeval time;
@@ -226,23 +236,23 @@ void *Motor(void *arg){
 			speed4 = speed3;
 		}
 		else{				//Gyro kontrolliert Speed
-			std::cout << "Gyro x= " << f_x << " abs: " << fabs(f_x - 0) << std::endl;
-			//X-Achse
-			if (fabs(f_x - 0) > 0.01){
+			std::cout << "Gyro x= " << f_x << " Gyro y= " << f_y << " Gyro z= " << f_z << std::endl;
+			//Z-Achse
+			if (fabs(f_z + wantedX) > 0.01){
 				std::cout << "change xxxx" << std::endl;
-				if ((f_x - 0) < 0.01 && (speed3 - speed1 < 5)) speed3 = speed3 + 1;
+				if ((f_y + wantedX) < 0.01 && (speed3 - speed1 < 5)) speed3 = speed3 + 1;
 				else if (speed1 - speed3 < 5) speed1 = speed1 + 1;
 			} 
 
 			//Y-Achse
-			if (fabs(f_y - 0) > 0.01){
-				if ((f_y - 0) < 0.01 && (speed4 - speed2 < 5)) speed4 = speed4 + 1;
+			if (fabs(f_z + wantedY) > 0.01){
+				if ((f_z + wantedY) < 0.01 && (speed4 - speed2 < 5)) speed4 = speed4 + 1;
 				else if (speed2 - speed4 < 5) speed2 = speed2 + 1;
 			}
 
-			//Z-Achse
-			if (fabs(f_z - 0) > 0.01){
-				if ((f_z - 0) > 0.01){
+			//X-Achse	(Hoch,runter)
+			if (fabs(f_x - wantedZ) > 0.01){
+				if ((f_x - wantedZ) > 0.01){
 					speed1 = speed1 - 1;
 					speed2 = speed2 - 1;
 					speed3 = speed3 - 1;
@@ -262,13 +272,13 @@ void *Motor(void *arg){
 
 		//Check speed in range
 		if (speed1 < 0) speed1 = 0;
-		if (speed1 > 100) speed1 = 100;
+		if (speed1 > 20) speed1 = 20;
 		if (speed2 < 0) speed2 = 0;
-		if (speed2 > 100) speed2 = 100;
+		if (speed2 > 20) speed2 = 20;
 		if (speed3 < 0) speed3 = 0;
-		if (speed3 > 100) speed3 = 100;
+		if (speed3 > 20) speed3 = 20;
 		if (speed4 < 0) speed4 = 0;
-		if (speed4 > 100) speed4 = 100;
+		if (speed4 > 20) speed4 = 20;
 
 		cout << "Speed1: " << speed1 << " Speed2: " << speed2 << " Speed3: " << speed3 << " Speed4: " << speed4 << "%" << endl;
 		softPwmWrite(0, speed1);
